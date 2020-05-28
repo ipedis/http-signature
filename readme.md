@@ -134,3 +134,7 @@ $computedHash = hash_hmac('sha256', $sourceString, backup_secret_token)
 if (hash_equals($computedHash, $receivedSignHeader)
     we have legit request
 ```
+
+## How to test
+
+View documentation folder
