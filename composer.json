@@ -1,0 +1,25 @@
+{
+    "name": "ipedis/http-signature",
+    "description": "Library to generate http signature",
+    "type": "library",
+    "require": {
+        "guzzlehttp/guzzle": "~6.0",
+        "php": ">7.2.0",
+        "symfony/http-foundation": "^5.0",
+        "symfony/psr-http-message-bridge": "^2.0",
+        "nyholm/psr7": "^1.3"
+    },
+    "authors": [
+        {
+            "name": "dev",
+            "email": "dev@ipedis.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Ipedis\\HttpSignature\\": "src/",
+            "Ipedis\\Demo\\HttpSignature\\": "demo/"
+        }
+    }
+}
