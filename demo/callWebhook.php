@@ -1,9 +1,5 @@
 <?php
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 use Ipedis\Demo\HttpSignature\Command\DeleteCommand;
 use Ipedis\Demo\HttpSignature\Command\ExpiredCommand;
 use Ipedis\Demo\HttpSignature\Command\GetCommand;
