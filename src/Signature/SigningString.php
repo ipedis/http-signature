@@ -51,9 +51,21 @@ class SigningString
     {
         return sprintf("%s.%s.%d.%s",
             $this->message->getMethod(),
-            (string) $this->message->getUri(),
+            $this->prepareUri((string) $this->message->getUri()),
             $this->timestamp,
             (string)$this->message->getBody()
         );
+    }
+
+    /**
+     * @param string $uri
+     * @return string
+     */
+    private function prepareUri(string $uri): string
+    {
+        /**
+         * Remove any trailing slash
+         */
+        return rtrim($uri,"/");
     }
 }
