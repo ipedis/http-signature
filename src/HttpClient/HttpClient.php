@@ -3,6 +3,7 @@
 namespace Ipedis\HttpSignature\HttpClient;
 
 
+use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
@@ -42,9 +43,9 @@ trait HttpClient
     /**
      * Add Custom PS headers to request
      *
-     * @return \Closure
+     * @return Closure
      */
-    private function addPSHeaders()
+    private function addPSHeaders(): Closure
     {
         return function (callable $handler)
         {
