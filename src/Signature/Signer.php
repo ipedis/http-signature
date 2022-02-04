@@ -24,7 +24,7 @@ trait Signer
      *
      * @return RequestInterface
      */
-    public function sign(RequestInterface $message)
+    public function sign(RequestInterface $message): RequestInterface
     {
         $timestamp = time();
         $signature = new Signature($message, $this->getSignatureKey(), $timestamp);
