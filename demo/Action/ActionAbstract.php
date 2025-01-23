@@ -16,14 +16,14 @@ abstract class ActionAbstract
         return '6dac31a13e50777a35bd3c7ac53823d7ac313e75';
     }
 
-    protected function onValidMessage(Request $request)
+    protected function onValidMessage(Request $request): void
     {
         echo "Request is valid\n";
         echo sprintf("PS-Timestamp = %s \n", $request->headers->get(Signature::PS_SIGNATURE_TIMESTAMP));
         echo sprintf("PS-Signature = %s \n", $request->headers->get(Signature::PS_SIGNATURE_SIGNATURE));
     }
 
-    protected function onInvalidMessage()
+    protected function onInvalidMessage(): void
     {
         echo "Request is invalid\n";
     }

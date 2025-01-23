@@ -14,11 +14,11 @@ $router = new Router();
 /**
  * Add Routes
  */
-$router->addRoute('/get', [GetAction::class, 'run']);
-$router->addRoute('/expired', [ExpiredGetAction::class, 'run']);
-$router->addRoute('/post', [PostAction::class, 'run']);
-$router->addRoute('/invalid-post', [InvalidPostAction::class, 'run']);
-$router->addRoute('/delete', [DeleteAction::class, 'run']);
+$router->addRoute('/get', [(new GetAction()), 'run']);
+$router->addRoute('/expired', [(new ExpiredGetAction()), 'run']);
+$router->addRoute('/post', [(new PostAction()), 'run']);
+$router->addRoute('/invalid-post', [(new InvalidPostAction()), 'run']);
+$router->addRoute('/delete', [(new DeleteAction()), 'run']);
 
 /**
  * Dispatch current action

@@ -16,7 +16,7 @@ trait HttpClient
     /**
      * @var Client|null
      */
-    protected $client = null;
+    protected ?Client $client = null;
 
     public function getClient(): Client
     {

@@ -3,6 +3,7 @@
 namespace Ipedis\Demo\HttpSignature\Action;
 
 
+use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\HttpFoundation\Request;
 
 class ExpiredGetAction extends ActionAbstract implements ActionInterface
@@ -12,7 +13,7 @@ class ExpiredGetAction extends ActionAbstract implements ActionInterface
      *
      * @param Request $request
      */
-    public function run(Request $request)
+    #[NoReturn] public function run(Request $request): void
     {
         sleep(61);
 

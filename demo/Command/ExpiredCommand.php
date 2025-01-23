@@ -3,13 +3,17 @@
 namespace Ipedis\Demo\HttpSignature\Command;
 
 
+use GuzzleHttp\Exception\GuzzleException;
+use JetBrains\PhpStorm\NoReturn;
+
 class ExpiredCommand extends CommandAbstract implements CommandInterface
 {
 
     /**
      * @param string $baseUrl
+     * @throws GuzzleException
      */
-    public function execute(string $baseUrl)
+    #[NoReturn] public function execute(string $baseUrl): void
     {
         printf("Calling EXPIRED GET webhook \n");
 

@@ -17,12 +17,12 @@ class SigningString
     /**
      * @var RequestInterface
      */
-    private $message;
+    private RequestInterface $message;
 
     /**
      * @var int
      */
-    private $timestamp;
+    private int $timestamp;
 
     /**
      * SigningString constructor.

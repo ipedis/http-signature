@@ -21,8 +21,18 @@ Update `composer.json` and add a repository:
     
 Require the library:
 
+- for symfony version < 7.2
+
+
     "require": {
         "ipedis/http-signature": "^1.0.0"
+    }
+
+- for symfony version >= 7.2
+
+
+    "require": {
+        "ipedis/http-signature": "^2.0.0"
     }
 
 

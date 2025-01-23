@@ -15,12 +15,12 @@ class Signature
     /**
      * @var string
      */
-    private $key;
+    private string $key;
 
     /**
      * @var SigningString
      */
-    private $signingString;
+    private SigningString $signingString;
 
     /**
      * Signature constructor.

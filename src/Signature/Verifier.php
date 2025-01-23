@@ -85,7 +85,7 @@ trait Verifier
         $messageSignature = $message->getHeader(Signature::PS_SIGNATURE_SIGNATURE)[0];
 
         /**
-         * Reject if timestamp older then 1 minute,
+         * Reject if timestamp older than 1 minute,
          * it can be Man to the middle who try to replay query
          */
         if ($this->isRequestExpired($messageTimestamp)) {
@@ -101,7 +101,7 @@ trait Verifier
     }
 
     /**
-     * Reject if timestamp older then 1 minute,
+     * Reject if timestamp older than 1 minute,
      * it can be Man to the middle who try to replay query
      *
      * @param int $requestTimestamp

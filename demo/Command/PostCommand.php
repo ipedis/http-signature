@@ -3,10 +3,16 @@
 namespace Ipedis\Demo\HttpSignature\Command;
 
 
+use GuzzleHttp\Exception\GuzzleException;
+use JetBrains\PhpStorm\NoReturn;
+
 class PostCommand extends CommandAbstract implements CommandInterface
 {
 
-    public function execute(string $baseUrl)
+    /**
+     * @throws GuzzleException
+     */
+    #[NoReturn] public function execute(string $baseUrl): void
     {
         printf("Calling POST webhook \n");
 

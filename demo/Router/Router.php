@@ -11,7 +11,7 @@ class Router
      *
      * @var array $routes
      */
-    private $routes = [];
+    private array $routes = [];
 
     /**
      * Register a new route
@@ -19,7 +19,7 @@ class Router
      * @param $action string
      * @param callable $callback Called when current URL matches provided action
      */
-    public function addRoute($action, $callback)
+    public function addRoute(string $action, callable $callback): void
     {
         $action = trim($action, '/');
         $this->routes[$action] = $callback;
@@ -31,7 +31,7 @@ class Router
      * @param $action string
      * @throws \Exception
      */
-    public function dispatch($action)
+    public function dispatch(string $action): void
     {
         $action = trim($action, '/');
 

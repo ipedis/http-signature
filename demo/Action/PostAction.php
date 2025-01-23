@@ -3,12 +3,13 @@
 namespace Ipedis\Demo\HttpSignature\Action;
 
 
+use JetBrains\PhpStorm\NoReturn;
 use Symfony\Component\HttpFoundation\Request;
 
 class PostAction extends ActionAbstract implements ActionInterface
 {
 
-    public function run(Request $request)
+    #[NoReturn] public function run(Request $request): void
     {
         if ($this->verify($request)) {
             $this->onValidMessage($request);

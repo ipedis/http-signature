@@ -4,6 +4,8 @@ namespace Ipedis\Demo\HttpSignature\Command;
 
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use JetBrains\PhpStorm\NoReturn;
 
 class InvalidPostCommand extends CommandAbstract implements CommandInterface
 {
@@ -12,8 +14,9 @@ class InvalidPostCommand extends CommandAbstract implements CommandInterface
      * which will not include signature headers to the request
      *
      * @param string $baseUrl
+     * @throws GuzzleException
      */
-    public function execute(string $baseUrl)
+    #[NoReturn] public function execute(string $baseUrl): void
     {
         $client = new Client();
 
