@@ -35,6 +35,13 @@ Require the library:
         "ipedis/http-signature": "^2.0.0"
     }
 
+- for symfony version >= 8.0
+
+
+    "require": {
+        "ipedis/http-signature": "^3.0.0"
+    }
+
 
 Folder structure
 ==
