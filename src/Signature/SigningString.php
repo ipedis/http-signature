@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ipedis\HttpSignature\Signature;
 
 
@@ -12,31 +14,16 @@ use Psr\Http\Message\RequestInterface;
  * Class SigningString
  * @package Ipedis\HttpSignature\Signature
  */
-class SigningString
+readonly class SigningString implements \Stringable
 {
     /**
-     * @var RequestInterface
-     */
-    private RequestInterface $message;
-
-    /**
-     * @var int
-     */
-    private int $timestamp;
-
-    /**
      * SigningString constructor.
-     *
-     * @param RequestInterface $message
-     * @param int $timestamp
      */
-    public function __construct(RequestInterface $message, int $timestamp)
+    public function __construct(private RequestInterface $message, private int $timestamp)
     {
-        $this->message = $message;
-        $this->timestamp = $timestamp;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->string();
     }
@@ -44,8 +31,6 @@ class SigningString
     /**
      * Signature is in the format
      * <method>.<url>.<timestamp>.<body>
-     *
-     * @return string
      */
     public function string(): string
     {
@@ -57,10 +42,6 @@ class SigningString
         );
     }
 
-    /**
-     * @param string $uri
-     * @return string
-     */
     private function prepareUri(string $uri): string
     {
         /**

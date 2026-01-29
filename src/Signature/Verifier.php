@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ipedis\HttpSignature\Signature;
 
 
@@ -23,7 +25,6 @@ trait Verifier
      * Check for valid signatures
      *
      * @param $message
-     * @return bool
      */
     public function verify($message): bool
     {
@@ -60,15 +61,9 @@ trait Verifier
     /**
      * Exception hook
      * Can be overwritten by child classes
-     *
-     * @param \Exception $exception
      */
     protected function onException(\Exception $exception){ }
 
-    /**
-     * @param RequestInterface $message
-     * @return bool
-     */
     private function checkForValidSignature(RequestInterface $message): bool
     {
         /**
@@ -103,12 +98,12 @@ trait Verifier
     /**
      * Reject if timestamp older than 1 minute,
      * it can be Man to the middle who try to replay query
-     *
-     * @param int $requestTimestamp
-     * @return bool
      */
-    private function isRequestExpired(int $requestTimestamp): bool
+    private function isRequestExpired(int|string $requestTimestamp): bool
     {
-        return (time() - $requestTimestamp) > 60;
+        if (is_string($requestTimestamp)) {
+            $requestTimestamp = (int)$requestTimestamp;
+        }
+        return (\Carbon\Carbon::now()->getTimestamp() - $requestTimestamp) > 60;
     }
 }

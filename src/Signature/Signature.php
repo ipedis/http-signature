@@ -1,49 +1,40 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Ipedis\HttpSignature\Signature;
 
 
 use Psr\Http\Message\RequestInterface;
 
-class Signature
+class Signature implements \Stringable
 {
     const PS_SIGNATURE_DIGEST_NAME = 'sha256';
+
     const PS_SIGNATURE_TIMESTAMP = 'PS-Timestamp';
+
     const PS_SIGNATURE_SIGNATURE = 'PS-Signature';
 
-    /**
-     * @var string
-     */
-    private string $key;
-
-    /**
-     * @var SigningString
-     */
-    private SigningString $signingString;
+    private readonly SigningString $signingString;
 
     /**
      * Signature constructor.
-     *
-     * @param RequestInterface $message
-     * @param string $key
-     * @param int $timestamp
      */
-    public function __construct(RequestInterface $message, string $key, int $timestamp)
+    public function __construct(RequestInterface $message, private readonly string $key, int|string $timestamp)
     {
-        $this->key = $key;
+        if (is_string($timestamp)) {
+            $timestamp = (int)$timestamp;
+        }
         $this->signingString = new SigningString($message, $timestamp);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->string();
     }
 
     /**
      * Generate hash for signature
-     *
-     * @return string
      */
     public function string(): string
     {
@@ -52,9 +43,6 @@ class Signature
 
     /**
      * Check if signature is same
-     *
-     * @param string $signature
-     * @return bool
      */
     public function isEqual(string $signature): bool
     {

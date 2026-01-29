@@ -10,7 +10,7 @@ require __DIR__.'/../vendor/autoload.php';
 
 $baseUrl = sprintf('%s://%s', 'http', 'localhost:5000');
 
-if (!empty($argv[1])) {
+if (isset($argv[1]) && ($argv[1] !== '' && $argv[1] !== '0')) {
     switch ($argv[1]) {
         case 'get':
             (new GetCommand())->execute($baseUrl);

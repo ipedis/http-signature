@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ipedis\Demo\HttpSignature\Command;
 
 
@@ -10,7 +12,6 @@ class ExpiredCommand extends CommandAbstract implements CommandInterface
 {
 
     /**
-     * @param string $baseUrl
      * @throws GuzzleException
      */
     #[NoReturn] public function execute(string $baseUrl): void

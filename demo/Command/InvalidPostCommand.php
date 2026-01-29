@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ipedis\Demo\HttpSignature\Command;
 
 
@@ -13,7 +15,6 @@ class InvalidPostCommand extends CommandAbstract implements CommandInterface
      * In this scenario, we are using directly guzzle
      * which will not include signature headers to the request
      *
-     * @param string $baseUrl
      * @throws GuzzleException
      */
     #[NoReturn] public function execute(string $baseUrl): void

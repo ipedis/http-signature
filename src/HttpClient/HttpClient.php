@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ipedis\HttpSignature\HttpClient;
 
 
@@ -13,9 +15,6 @@ trait HttpClient
 {
     use Signer;
 
-    /**
-     * @var Client|null
-     */
     protected ?Client $client = null;
 
     public function getClient(): Client
@@ -29,8 +28,6 @@ trait HttpClient
 
     /**
      * Create new Guzzle middleware stack
-     *
-     * @return HandlerStack
      */
     private function getHandlerStack(): HandlerStack
     {
@@ -42,17 +39,12 @@ trait HttpClient
 
     /**
      * Add Custom PS headers to request
-     *
-     * @return Closure
      */
     private function addPSHeaders(): Closure
     {
-        return function (callable $handler)
-        {
-            return function (Request $request, array $options) use ($handler) {
-                $request = $this->sign($request);
-                return $handler($request, $options);
-            };
+        return fn(callable $handler) => function (Request $request, array $options) use ($handler) {
+            $request = $this->sign($request);
+            return $handler($request, $options);
         };
     }
 }

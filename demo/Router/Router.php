@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ipedis\Demo\HttpSignature\Router;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -8,8 +10,6 @@ class Router
 {
     /**
      * Holds the registered routes
-     *
-     * @var array $routes
      */
     private array $routes = [];
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ipedis\Demo\HttpSignature\Action;
 
 
@@ -10,8 +12,6 @@ class InvalidPostAction extends ActionAbstract implements ActionInterface
 {
     /**
      * On this scenario, signature headers are not present
-     *
-     * @param Request $request
      */
     #[NoReturn] public function run(Request $request): void
     {
