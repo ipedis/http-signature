@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipedis\HttpSignature\Signature;
 
-
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -52,6 +51,7 @@ trait Verifier
              * Exception hook that can be overwritten by child classes
              */
             $this->onException($exception);
+
             return false;
         }
     }
@@ -62,7 +62,9 @@ trait Verifier
      * Exception hook
      * Can be overwritten by child classes
      */
-    protected function onException(\Exception $exception){ }
+    protected function onException(\Exception $exception)
+    {
+    }
 
     private function checkForValidSignature(RequestInterface $message): bool
     {
@@ -102,8 +104,9 @@ trait Verifier
     private function isRequestExpired(int|string $requestTimestamp): bool
     {
         if (is_string($requestTimestamp)) {
-            $requestTimestamp = (int)$requestTimestamp;
+            $requestTimestamp = (int) $requestTimestamp;
         }
+
         return (\Carbon\Carbon::now()->getTimestamp() - $requestTimestamp) > 60;
     }
 }

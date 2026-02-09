@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipedis\HttpSignature\Signature;
 
-
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -34,11 +33,12 @@ readonly class SigningString implements \Stringable
      */
     public function string(): string
     {
-        return sprintf("%s.%s.%d.%s",
+        return sprintf(
+            "%s.%s.%d.%s",
             $this->message->getMethod(),
             $this->prepareUri((string) $this->message->getUri()),
             $this->timestamp,
-            (string)$this->message->getBody()
+            (string) $this->message->getBody()
         );
     }
 
@@ -47,6 +47,6 @@ readonly class SigningString implements \Stringable
         /**
          * Remove any trailing slash
          */
-        return rtrim($uri,"/");
+        return rtrim($uri, "/");
     }
 }
