@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipedis\Demo\HttpSignature\Command;
 
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use JetBrains\PhpStorm\NoReturn;
@@ -17,15 +16,16 @@ class InvalidPostCommand extends CommandAbstract implements CommandInterface
      *
      * @throws GuzzleException
      */
-    #[NoReturn] public function execute(string $baseUrl): void
+    #[NoReturn]
+    public function execute(string $baseUrl): void
     {
         $client = new Client();
 
         $response = $client->post(sprintf('%s/%s', $baseUrl, 'post'), [
             'form_params' => [
-                'name'  => 'Hello World',
-                'email' => 'hello@world.com'
-            ]
+                'name' => 'Hello World',
+                'email' => 'hello@world.com',
+            ],
         ]);
 
         var_dump($response->getBody()->getContents());

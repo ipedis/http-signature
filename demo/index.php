@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Ipedis\Demo\HttpSignature\Action\DeleteAction;
 use Ipedis\Demo\HttpSignature\Action\ExpiredGetAction;
 use Ipedis\Demo\HttpSignature\Action\GetAction;
@@ -7,7 +9,7 @@ use Ipedis\Demo\HttpSignature\Action\InvalidPostAction;
 use Ipedis\Demo\HttpSignature\Action\PostAction;
 use Ipedis\Demo\HttpSignature\Router\Router;
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $router = new Router();
 

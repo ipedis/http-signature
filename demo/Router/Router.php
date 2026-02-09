@@ -29,6 +29,7 @@ class Router
      * Dispatch the router
      *
      * @param $action string
+     *
      * @throws \Exception
      */
     public function dispatch(string $action): void
@@ -46,6 +47,6 @@ class Router
 
         $request = Request::createFromGlobals();
 
-        call_user_func([new $class, $method], $request);
+        call_user_func([new $class(), $method], $request);
     }
 }

@@ -9,7 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class GetAction extends ActionAbstract implements ActionInterface
 {
-    #[NoReturn] public function run(Request $request): void
+    #[NoReturn]
+    public function run(Request $request): void
     {
         if ($this->verify($request)) {
             $this->onValidMessage($request);

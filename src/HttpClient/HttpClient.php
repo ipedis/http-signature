@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipedis\HttpSignature\HttpClient;
 
-
 use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
@@ -42,8 +41,9 @@ trait HttpClient
      */
     private function addPSHeaders(): Closure
     {
-        return fn(callable $handler) => function (Request $request, array $options) use ($handler) {
+        return fn (callable $handler): Closure => function (Request $request, array $options) use ($handler) {
             $request = $this->sign($request);
+
             return $handler($request, $options);
         };
     }

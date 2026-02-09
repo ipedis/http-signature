@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipedis\Demo\HttpSignature\Action;
 
-
 use Ipedis\HttpSignature\Signature\Signature;
 use Ipedis\HttpSignature\Signature\Verifier;
 use Symfony\Component\HttpFoundation\Request;

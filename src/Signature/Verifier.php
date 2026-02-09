@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Ipedis\HttpSignature\Signature;
 
-
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Request;
+use Carbon\Carbon;
 
 /**
  * Utility to check if a request is valid. A valid request:
@@ -17,16 +17,13 @@ use Symfony\Component\HttpFoundation\Request;
  * - has same hash when signature is recomputed
  *
  * Trait Verifier
- * @package Ipedis\HttpSignature\Signature
  */
 trait Verifier
 {
     /**
      * Check for valid signatures
-     *
-     * @param $message
      */
-    public function verify($message): bool
+    public function verify(Request|RequestInterface $message): bool
     {
         try {
             /**
@@ -39,19 +36,13 @@ trait Verifier
                 $message = $psrHttpFactory->createRequest($message);
             }
 
-            /**
-             * Message is not PSR-7 compatible
-             */
-            if (!$message instanceof RequestInterface) {
-                throw new \Exception('Request is not compatible with PSR-7');
-            }
-
             return $this->checkForValidSignature($message);
         } catch (\Exception $exception) {
             /**
              * Exception hook that can be overwritten by child classes
              */
             $this->onException($exception);
+
             return false;
         }
     }
@@ -62,7 +53,9 @@ trait Verifier
      * Exception hook
      * Can be overwritten by child classes
      */
-    protected function onException(\Exception $exception){ }
+    protected function onException(\Exception $exception): void
+    {
+    }
 
     private function checkForValidSignature(RequestInterface $message): bool
     {
@@ -102,8 +95,9 @@ trait Verifier
     private function isRequestExpired(int|string $requestTimestamp): bool
     {
         if (is_string($requestTimestamp)) {
-            $requestTimestamp = (int)$requestTimestamp;
+            $requestTimestamp = (int) $requestTimestamp;
         }
-        return (\Carbon\Carbon::now()->getTimestamp() - $requestTimestamp) > 60;
+
+        return (Carbon::now()->getTimestamp() - $requestTimestamp) > 60;
     }
 }

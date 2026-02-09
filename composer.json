@@ -24,6 +24,30 @@
         }
     },
     "require-dev": {
-        "rector/rector": "^2.3"
+        "rector/rector": "^2.3",
+        "phpunit/phpunit": "^11.5",
+        "phpstan/phpstan": "^2.1",
+        "laravel/pint": "^1.19",
+        "phpstan/phpstan-strict-rules": "^2.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ipedis\\HttpSignature\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-html coverage",
+        "phpstan": "phpstan analyse --memory-limit 2024M",
+        "pint": "pint",
+        "pint:check": "pint --test",
+        "rector": "rector process",
+        "rector:check": "rector process --dry-run",
+        "qa": [
+            "@rector",
+            "@pint",
+            "@phpstan",
+            "@test"
+        ]
     }
 }
