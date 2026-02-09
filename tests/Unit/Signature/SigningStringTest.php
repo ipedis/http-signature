@@ -7,6 +7,7 @@ namespace Ipedis\HttpSignature\Tests\Unit\Signature;
 use Ipedis\HttpSignature\Signature\SigningString;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SigningStringTest extends TestCase
 {
@@ -18,7 +19,10 @@ class SigningStringTest extends TestCase
         $this->psr17Factory = new Psr17Factory();
     }
 
-    public function test_signing_string_format(): void
+    /**
+     */
+    #[Test]
+    public function signing_string_format(): void
     {
         $request = $this->psr17Factory->createRequest('POST', 'https://example.com/api/test');
         $request = $request->withBody($this->psr17Factory->createStream('{"test": "data"}'));
@@ -30,7 +34,10 @@ class SigningStringTest extends TestCase
         $this->assertEquals($expected, $signingString->string());
     }
 
-    public function test_signing_string_removes_trailing_slash(): void
+    /**
+     */
+    #[Test]
+    public function signing_string_removes_trailing_slash(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test/');
 
@@ -41,7 +48,10 @@ class SigningStringTest extends TestCase
         $this->assertEquals($expected, $signingString->string());
     }
 
-    public function test_signing_string_to_string(): void
+    /**
+     */
+    #[Test]
+    public function signing_string_to_string(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test');
 
@@ -51,7 +61,10 @@ class SigningStringTest extends TestCase
         $this->assertEquals($signingString->string(), (string) $signingString);
     }
 
-    public function test_signing_string_with_empty_body(): void
+    /**
+     */
+    #[Test]
+    public function signing_string_with_empty_body(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test');
 
@@ -62,7 +75,10 @@ class SigningStringTest extends TestCase
         $this->assertEquals($expected, $signingString->string());
     }
 
-    public function test_signing_string_with_different_methods(): void
+    /**
+     */
+    #[Test]
+    public function signing_string_with_different_methods(): void
     {
         $timestamp = 1234567890;
 

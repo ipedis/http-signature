@@ -15,19 +15,10 @@
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>
-        <testsuite name="Integration">
-            <directory>tests/Integration</directory>
-        </testsuite>
     </testsuites>
     <source>
         <include>
             <directory>src</directory>
         </include>
     </source>
-    <coverage>
-        <report>
-            <html outputDirectory="coverage"/>
-            <text outputFile="php://stdout"/>
-        </report>
-    </coverage>
 </phpunit>

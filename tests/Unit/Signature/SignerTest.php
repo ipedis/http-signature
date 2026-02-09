@@ -9,7 +9,7 @@ use Ipedis\HttpSignature\Signature\Signature;
 use Ipedis\HttpSignature\Signature\Signer;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
+use PHPUnit\Framework\Attributes\Test;
 
 class SignerTest extends TestCase
 {
@@ -21,9 +21,12 @@ class SignerTest extends TestCase
         $this->psr17Factory = new Psr17Factory();
     }
 
-    public function test_signer_adds_signature_headers(): void
+    /**
+     */
+    #[Test]
+    public function signer_adds_signature_headers(): void
     {
-        $signer = new class {
+        $signer = new class () {
             use Signer;
 
             protected function getSignatureKey(): string
@@ -40,9 +43,12 @@ class SignerTest extends TestCase
         $this->assertTrue($signedRequest->hasHeader(Signature::PS_SIGNATURE_SIGNATURE));
     }
 
-    public function test_signer_timestamp_is_current(): void
+    /**
+     */
+    #[Test]
+    public function signer_timestamp_is_current(): void
     {
-        $signer = new class {
+        $signer = new class () {
             use Signer;
 
             protected function getSignatureKey(): string
@@ -63,9 +69,12 @@ class SignerTest extends TestCase
         $this->assertLessThanOrEqual($afterSign, $timestamp);
     }
 
-    public function test_signer_signature_is_not_empty(): void
+    /**
+     */
+    #[Test]
+    public function signer_signature_is_not_empty(): void
     {
-        $signer = new class {
+        $signer = new class () {
             use Signer;
 
             protected function getSignatureKey(): string
@@ -85,9 +94,12 @@ class SignerTest extends TestCase
         $this->assertEquals(64, strlen($signature)); // SHA256 produces 64 character hex string
     }
 
-    public function test_signer_preserves_original_request_properties(): void
+    /**
+     */
+    #[Test]
+    public function signer_preserves_original_request_properties(): void
     {
-        $signer = new class {
+        $signer = new class () {
             use Signer;
 
             protected function getSignatureKey(): string

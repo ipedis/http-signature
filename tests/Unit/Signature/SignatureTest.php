@@ -7,6 +7,7 @@ namespace Ipedis\HttpSignature\Tests\Unit\Signature;
 use Ipedis\HttpSignature\Signature\Signature;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SignatureTest extends TestCase
 {
@@ -18,7 +19,10 @@ class SignatureTest extends TestCase
         $this->psr17Factory = new Psr17Factory();
     }
 
-    public function test_signature_generates_hash(): void
+    /**
+     */
+    #[Test]
+    public function signature_generates_hash(): void
     {
         $request = $this->psr17Factory->createRequest('POST', 'https://example.com/api/test');
         $request = $request->withBody($this->psr17Factory->createStream('{"test": "data"}'));
@@ -30,11 +34,13 @@ class SignatureTest extends TestCase
         $signatureString = $signature->string();
 
         $this->assertNotEmpty($signatureString);
-        $this->assertIsString($signatureString);
         $this->assertEquals(64, strlen($signatureString)); // SHA256 produces 64 character hex string
     }
 
-    public function test_signature_is_deterministic(): void
+    /**
+     */
+    #[Test]
+    public function signature_is_deterministic(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/users');
 
@@ -47,7 +53,10 @@ class SignatureTest extends TestCase
         $this->assertEquals($signature1->string(), $signature2->string());
     }
 
-    public function test_signature_is_equal_method(): void
+    /**
+     */
+    #[Test]
+    public function signature_is_equal_method(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test');
 
@@ -61,7 +70,10 @@ class SignatureTest extends TestCase
         $this->assertFalse($signature->isEqual('invalid-signature'));
     }
 
-    public function test_signature_to_string(): void
+    /**
+     */
+    #[Test]
+    public function signature_to_string(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test');
 
@@ -73,7 +85,10 @@ class SignatureTest extends TestCase
         $this->assertEquals($signature->string(), (string) $signature);
     }
 
-    public function test_different_timestamps_produce_different_signatures(): void
+    /**
+     */
+    #[Test]
+    public function different_timestamps_produce_different_signatures(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test');
         $key = 'test-secret-key';
@@ -84,7 +99,10 @@ class SignatureTest extends TestCase
         $this->assertNotEquals($signature1->string(), $signature2->string());
     }
 
-    public function test_different_keys_produce_different_signatures(): void
+    /**
+     */
+    #[Test]
+    public function different_keys_produce_different_signatures(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test');
         $timestamp = 1234567890;
@@ -95,7 +113,10 @@ class SignatureTest extends TestCase
         $this->assertNotEquals($signature1->string(), $signature2->string());
     }
 
-    public function test_signature_accepts_string_timestamp(): void
+    /**
+     */
+    #[Test]
+    public function signature_accepts_string_timestamp(): void
     {
         $request = $this->psr17Factory->createRequest('GET', 'https://example.com/api/test');
         $key = 'test-secret-key';

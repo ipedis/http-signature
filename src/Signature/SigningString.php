@@ -11,7 +11,6 @@ use Psr\Http\Message\RequestInterface;
  *  <method>.<url>.<timestamp>.<body>
  *
  * Class SigningString
- * @package Ipedis\HttpSignature\Signature
  */
 readonly class SigningString implements \Stringable
 {
@@ -34,7 +33,7 @@ readonly class SigningString implements \Stringable
     public function string(): string
     {
         return sprintf(
-            "%s.%s.%d.%s",
+            '%s.%s.%d.%s',
             $this->message->getMethod(),
             $this->prepareUri((string) $this->message->getUri()),
             $this->timestamp,
@@ -47,6 +46,6 @@ readonly class SigningString implements \Stringable
         /**
          * Remove any trailing slash
          */
-        return rtrim($uri, "/");
+        return rtrim($uri, '/');
     }
 }

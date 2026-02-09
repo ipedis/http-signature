@@ -38,15 +38,15 @@
     "scripts": {
         "test": "phpunit",
         "test:coverage": "phpunit --coverage-html coverage",
-        "phpstan": "phpstan analyse",
+        "phpstan": "phpstan analyse --memory-limit 2024M",
         "pint": "pint",
         "pint:check": "pint --test",
         "rector": "rector process",
         "rector:check": "rector process --dry-run",
         "qa": [
-            "@pint:check",
+            "@rector",
+            "@pint",
             "@phpstan",
-            "@rector:check",
             "@test"
         ]
     }

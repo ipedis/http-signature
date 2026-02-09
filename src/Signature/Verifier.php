@@ -8,6 +8,7 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Request;
+use Carbon\Carbon;
 
 /**
  * Utility to check if a request is valid. A valid request:
@@ -16,16 +17,13 @@ use Symfony\Component\HttpFoundation\Request;
  * - has same hash when signature is recomputed
  *
  * Trait Verifier
- * @package Ipedis\HttpSignature\Signature
  */
 trait Verifier
 {
     /**
      * Check for valid signatures
-     *
-     * @param $message
      */
-    public function verify($message): bool
+    public function verify(Request|RequestInterface $message): bool
     {
         try {
             /**
@@ -36,13 +34,6 @@ trait Verifier
                 $psr17Factory = new Psr17Factory();
                 $psrHttpFactory = new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
                 $message = $psrHttpFactory->createRequest($message);
-            }
-
-            /**
-             * Message is not PSR-7 compatible
-             */
-            if (!$message instanceof RequestInterface) {
-                throw new \Exception('Request is not compatible with PSR-7');
             }
 
             return $this->checkForValidSignature($message);
@@ -62,7 +53,7 @@ trait Verifier
      * Exception hook
      * Can be overwritten by child classes
      */
-    protected function onException(\Exception $exception)
+    protected function onException(\Exception $exception): void
     {
     }
 
@@ -107,6 +98,6 @@ trait Verifier
             $requestTimestamp = (int) $requestTimestamp;
         }
 
-        return (\Carbon\Carbon::now()->getTimestamp() - $requestTimestamp) > 60;
+        return (Carbon::now()->getTimestamp() - $requestTimestamp) > 60;
     }
 }

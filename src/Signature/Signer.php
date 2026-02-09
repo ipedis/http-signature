@@ -9,20 +9,11 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * Trait Signer
- *
- * @package Ipedis\HttpSignature\Signature
- *
- * Accepts a PSR-7 Message and adds signature headers to the message
- * - Current timestamp
- * - hash of <method>.<url>.<timestamp>.<body>
- *
  */
 trait Signer
 {
     /**
      * Add signature headers to the PSR-7 message
-     *
-     *
      */
     public function sign(RequestInterface $message): RequestInterface
     {

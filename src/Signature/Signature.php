@@ -24,6 +24,7 @@ class Signature implements \Stringable
         if (is_string($timestamp)) {
             $timestamp = (int) $timestamp;
         }
+
         $this->signingString = new SigningString($message, $timestamp);
     }
 

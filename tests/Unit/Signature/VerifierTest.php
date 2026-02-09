@@ -10,6 +10,7 @@ use Ipedis\HttpSignature\Signature\Signer;
 use Ipedis\HttpSignature\Signature\Verifier;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class VerifierTest extends TestCase
 {
@@ -21,11 +22,14 @@ class VerifierTest extends TestCase
         $this->psr17Factory = new Psr17Factory();
     }
 
-    public function test_verifier_accepts_valid_signature(): void
+    /**
+     */
+    #[Test]
+    public function verifier_accepts_valid_signature(): void
     {
         $key = 'test-secret-key';
 
-        $signer = new class($key) {
+        $signer = new class ($key) {
             use Signer;
 
             public function __construct(private string $key)
@@ -38,7 +42,7 @@ class VerifierTest extends TestCase
             }
         };
 
-        $verifier = new class($key) {
+        $verifier = new class ($key) {
             use Verifier;
 
             public function __construct(private string $key)
@@ -59,9 +63,12 @@ class VerifierTest extends TestCase
         $this->assertTrue($verifier->verify($signedRequest));
     }
 
-    public function test_verifier_rejects_missing_signature_headers(): void
+    /**
+     */
+    #[Test]
+    public function verifier_rejects_missing_signature_headers(): void
     {
-        $verifier = new class {
+        $verifier = new class () {
             use Verifier;
 
             protected function getSignatureKey(): string
@@ -75,9 +82,12 @@ class VerifierTest extends TestCase
         $this->assertFalse($verifier->verify($request));
     }
 
-    public function test_verifier_rejects_invalid_signature(): void
+    /**
+     */
+    #[Test]
+    public function verifier_rejects_invalid_signature(): void
     {
-        $verifier = new class {
+        $verifier = new class () {
             use Verifier;
 
             protected function getSignatureKey(): string
@@ -93,11 +103,14 @@ class VerifierTest extends TestCase
         $this->assertFalse($verifier->verify($request));
     }
 
-    public function test_verifier_rejects_expired_signature(): void
+    /**
+     */
+    #[Test]
+    public function verifier_rejects_expired_signature(): void
     {
         $key = 'test-secret-key';
 
-        $verifier = new class($key) {
+        $verifier = new class ($key) {
             use Verifier;
 
             public function __construct(private string $key)
@@ -123,12 +136,15 @@ class VerifierTest extends TestCase
         $this->assertFalse($verifier->verify($request));
     }
 
-    public function test_verifier_rejects_wrong_key(): void
+    /**
+     */
+    #[Test]
+    public function verifier_rejects_wrong_key(): void
     {
         $signerKey = 'signer-key';
         $verifierKey = 'verifier-key';
 
-        $signer = new class($signerKey) {
+        $signer = new class ($signerKey) {
             use Signer;
 
             public function __construct(private string $key)
@@ -141,7 +157,7 @@ class VerifierTest extends TestCase
             }
         };
 
-        $verifier = new class($verifierKey) {
+        $verifier = new class ($verifierKey) {
             use Verifier;
 
             public function __construct(private string $key)

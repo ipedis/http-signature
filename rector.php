@@ -15,9 +15,9 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/demo',
     ])
-     ->withPhpSets(
-         php82: true,
-     )
+    ->withPhpSets(
+        php82: true,
+    )
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
@@ -35,7 +35,7 @@ return RectorConfig::configure()
         symfonyConfigs: true,
     )
     ->withSets(sets: [
-        PHPUnitSetList::PHPUNIT_110,
+        PHPUnitSetList::PHPUNIT_120,
     ])
     ->withComposerBased(symfony: true)
     ->withSkip([
@@ -44,5 +44,4 @@ return RectorConfig::configure()
         RenameVariableToMatchMethodCallReturnTypeRector::class,
         SetCookieRector::class,
         ControllerMethodInjectionToConstructorRector::class,
-    ])
-;
+    ]);

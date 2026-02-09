@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipedis\Demo\HttpSignature\Command;
 
-
 use Ipedis\HttpSignature\HttpClient\HttpClient;
 
 abstract class CommandAbstract
