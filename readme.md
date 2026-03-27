@@ -264,6 +264,7 @@ All traits require implementing `getSignatureKey(): string`.
 | 10.x    | ✅ |
 | 11.x    | ✅ |
 | 12.x    | ✅ |
+| 13.x    | ✅ |
 
 ## Local Development
 
