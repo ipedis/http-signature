@@ -104,6 +104,41 @@ class SignedClientFactoryTest extends TestCase
         $this->assertTrue($expectedSignature->isEqual($receivedSignature));
     }
 
+    #[Test]
+    public function it_preserves_existing_handler_stack(): void
+    {
+        $capturedRequest = null;
+        $customMiddlewareCalled = false;
+
+        $mock = new MockHandler([
+            function (RequestInterface $request) use (&$capturedRequest): Response {
+                $capturedRequest = $request;
+
+                return new Response(200);
+            },
+        ]);
+
+        $existingStack = HandlerStack::create($mock);
+        $existingStack->push(function (callable $handler) use (&$customMiddlewareCalled): Closure {
+            return function (RequestInterface $request, array $options) use ($handler, &$customMiddlewareCalled) {
+                $customMiddlewareCalled = true;
+
+                return $handler($request, $options);
+            };
+        });
+
+        $factory = new SignedClientFactory('test-key');
+        $client = $factory->create(['handler' => $existingStack]);
+
+        $client->post('https://example.com/api/test', [
+            'body' => '{"event": "test"}',
+        ]);
+
+        $this->assertTrue($customMiddlewareCalled, 'Custom middleware should have been called');
+        $this->assertInstanceOf(RequestInterface::class, $capturedRequest);
+        $this->assertTrue($capturedRequest->hasHeader(Signature::PS_SIGNATURE_SIGNATURE));
+    }
+
     private function getMiddleware(SignedClientFactory $factory): Closure
     {
         $reflection = new \ReflectionClass($factory);

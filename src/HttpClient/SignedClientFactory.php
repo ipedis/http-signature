@@ -27,10 +27,20 @@ class SignedClientFactory
      */
     public function create(array $config = []): Client
     {
-        $stack = HandlerStack::create();
-        $stack->push($this->signatureMiddleware());
+        $existingHandler = $config['handler'] ?? null;
 
-        return new Client(array_merge($config, ['handler' => $stack]));
+        if ($existingHandler instanceof HandlerStack) {
+            $stack = $existingHandler;
+        } elseif (is_callable($existingHandler)) {
+            $stack = HandlerStack::create($existingHandler);
+        } else {
+            $stack = HandlerStack::create();
+        }
+
+        $stack->push($this->signatureMiddleware());
+        $config['handler'] = $stack;
+
+        return new Client($config);
     }
 
     private function signatureMiddleware(): Closure

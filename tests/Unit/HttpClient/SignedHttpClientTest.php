@@ -161,6 +161,20 @@ class SignedHttpClientTest extends TestCase
     }
 
     #[Test]
+    public function it_throws_on_unsupported_body_type(): void
+    {
+        $inner = $this->createMock(HttpClientInterface::class);
+        $client = new SignedHttpClient($inner, 'test-key');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('SignedHttpClient only supports string body or json options');
+
+        $client->request('POST', 'https://example.com/api/test', [
+            'body' => fopen('php://memory', 'r'),
+        ]);
+    }
+
+    #[Test]
     public function with_options_returns_new_instance(): void
     {
         $inner = $this->createMock(HttpClientInterface::class);

@@ -68,8 +68,15 @@ final readonly class SignedHttpClient implements HttpClientInterface
      */
     private function resolveBody(array $options): string
     {
-        if (isset($options['body']) && is_string($options['body'])) {
-            return $options['body'];
+        if (isset($options['body'])) {
+            if (is_string($options['body'])) {
+                return $options['body'];
+            }
+
+            throw new \InvalidArgumentException(
+                'SignedHttpClient only supports string body or json options. '
+                . 'Got body of type ' . get_debug_type($options['body']) . '.'
+            );
         }
 
         if (isset($options['json'])) {
