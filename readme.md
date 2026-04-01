@@ -1,157 +1,296 @@
-Publispeak HTTP Signature library
---
+# HTTP Signature
 
-This library is required for internal publispeak HTTP request. 
-The choice of Guzzle for the HTTP Client :
-- Guzzle allows to inject middleware into its stack, with which 
-additional headers can be added in the request object
+[![CI](https://github.com/ipedis/http-signature/actions/workflows/ci.yml/badge.svg)](https://github.com/ipedis/http-signature/actions/workflows/ci.yml)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/ipedis/http-signature.svg)](https://packagist.org/packages/ipedis/http-signature)
+[![PHP Version](https://img.shields.io/packagist/php-v/ipedis/http-signature.svg)](https://packagist.org/packages/ipedis/http-signature)
+[![License](https://img.shields.io/packagist/l/ipedis/http-signature.svg)](https://packagist.org/packages/ipedis/http-signature)
 
-Installation
-==
+HMAC-SHA256 HTTP request signing and verification library for PHP. Signs outgoing PSR-7 requests and verifies incoming ones using a shared secret key, with built-in replay attack protection (60-second window).
 
-Update `composer.json` and add a repository:
+## Installation
 
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "bitbucket:ipedis/http-signature.git"
+```bash
+composer require ipedis/http-signature
+```
+
+## Quick Start
+
+### Sign outgoing requests (Guzzle middleware)
+
+```php
+use Ipedis\HttpSignature\HttpClient\HttpClient;
+
+class MyApiClient
+{
+    use HttpClient;
+
+    protected function getSignatureKey(): string
+    {
+        return 'your-shared-secret-key';
+    }
+}
+
+$client = new MyApiClient();
+$response = $client->getClient()->post('https://api.example.com/webhook', [
+    'json' => ['event' => 'user.created'],
+]);
+// PS-Signature and PS-Timestamp headers are added automatically
+```
+
+### Verify incoming requests
+
+```php
+use Ipedis\HttpSignature\Signature\Verifier;
+use Symfony\Component\HttpFoundation\Request;
+
+class WebhookController
+{
+    use Verifier;
+
+    protected function getSignatureKey(): string
+    {
+        return 'your-shared-secret-key';
+    }
+
+    public function handle(Request $request): void
+    {
+        if (!$this->verify($request)) {
+            throw new \RuntimeException('Invalid signature');
         }
-    ]
-    
-    
-Require the library:
 
-- for symfony version < 7.2
-
-
-    "require": {
-        "ipedis/http-signature": "^1.0.0"
+        // Request is authentic and recent (< 60 seconds)
     }
+}
+```
 
-- for symfony version >= 7.2
+## Framework Integration
 
+The library provides injectable services as an alternative to traits, following each framework's dependency injection conventions.
 
-    "require": {
-        "ipedis/http-signature": "^2.0.0"
+### Symfony
+
+The `SignedHttpClient` is a decorator that wraps any Symfony `HttpClientInterface` and automatically signs every outgoing request.
+
+**Register the services:**
+
+```yaml
+# config/services.yaml
+services:
+    Ipedis\HttpSignature\HttpClient\SignedHttpClient:
+        arguments:
+            $client: '@http_client'
+            $signatureKey: '%env(HTTP_SIGNATURE_KEY)%'
+
+    Ipedis\HttpSignature\Signature\SignatureVerifier:
+        arguments:
+            $signatureKey: '%env(HTTP_SIGNATURE_KEY)%'
+```
+
+**Sign outgoing requests:**
+
+```php
+use Ipedis\HttpSignature\HttpClient\SignedHttpClient;
+
+class WebhookDispatcher
+{
+    public function __construct(private SignedHttpClient $client) {}
+
+    public function dispatch(string $url, array $payload): void
+    {
+        $this->client->request('POST', $url, [
+            'json' => $payload,
+        ]);
+        // PS-Signature and PS-Timestamp headers are added automatically
     }
+}
+```
 
-- for symfony version >= 8.0
+**Verify incoming requests:**
 
+```php
+use Ipedis\HttpSignature\Signature\SignatureVerifier;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-    "require": {
-        "ipedis/http-signature": "^3.0.0"
+class WebhookController
+{
+    public function __construct(private SignatureVerifier $verifier) {}
+
+    public function __invoke(Request $request): JsonResponse
+    {
+        if (!$this->verifier->verify($request)) {
+            return new JsonResponse(['error' => 'Invalid signature'], 403);
+        }
+
+        // Process webhook...
+        return new JsonResponse(['status' => 'ok']);
     }
-
-
-Folder structure
-==
-
-* **demo** Will contain all examples for actual covered behavior from this library.
-* **src** Set of class or trait available.
-* **docs** All documentation.
-
-
-Sending a signed Http request
-==
-
-Use the `HttpClient` trait to send an HTTP request. The signature will be added automaticaly by the trait.
-
-```
-[...]
-
-use HttpClient;
-
-[...]
-
-$response = $this->getClient()->get(<url>);
-$response = $this->getClient()->post(<url>);
-$response = $this->getClient()->delete(<url>);
-
-[...]
-
+}
 ```
 
+### Laravel
 
-Signing a request
-==
+The library ships with a service provider that auto-registers `SignedClientFactory` and `SignatureVerifier` as singletons.
 
-Use the `Signer` trait to add signature to a PSR-7 compatible request
+**Step 1 — Add your signature key to config:**
 
-```
-[...]
-
-use Signer;
-
-[...]
-
-$request = $this->sign($request);
-
-[...]
-
+```php
+// config/services.php
+return [
+    // ...
+    'http_signature' => [
+        'key' => env('HTTP_SIGNATURE_KEY'),
+    ],
+];
 ```
 
-Verify a request
-==
+**Step 2 — Register the service provider** (auto-discovered if using Laravel package discovery):
 
-Use the `Verify` trait to check validity of a PSR-7 compatible request
-
-```
-[...]
-
-use Verifier;
-
-[...]
-
-$isValid = $this->verify($request)
-
-[...]
-
+```php
+// bootstrap/providers.php (Laravel 11+)
+return [
+    // ...
+    Ipedis\HttpSignature\Laravel\HttpSignatureServiceProvider::class,
+];
 ```
 
+Or in `config/app.php` for older versions:
 
-How it works
-==
-
-## Adding the signature
-
-Take Method (GET, POST …)
-
-Take  full Url path (exemple : http://recovery.publispeak.local/api/event/dispatch
-
-Create a timestamp as which will be added as HEADER of each signed query.
-
-Take string serialized request body  
-
-Concatenated all of this information by a predictable order. Example:
-
-```
-  Pattern:
-  METHOD.url.timestamp.stringified_body
-  Sample:
-  GET.http://recovery.publispeak.local/api/event/dispatch.13903209123.{foo:bar}
+```php
+'providers' => [
+    // ...
+    Ipedis\HttpSignature\Laravel\HttpSignatureServiceProvider::class,
+],
 ```
 
-then calculate the HMAC_256 of this string.
+**Sign outgoing requests:**
 
+```php
+use Ipedis\HttpSignature\HttpClient\SignedClientFactory;
+
+class WebhookDispatcher
+{
+    public function __construct(private SignedClientFactory $factory) {}
+
+    public function dispatch(string $url, array $payload): void
+    {
+        $client = $this->factory->create();
+        $client->post($url, [
+            'json' => $payload,
+        ]);
+        // PS-Signature and PS-Timestamp headers are added automatically
+    }
+}
 ```
-  Computed HMAC:
-  bc1c3a7513079cd8e02a4ef367bf72e161e0fa7207cd1e89c3daf3ee682897ef
+
+**Verify incoming requests:**
+
+```php
+use Ipedis\HttpSignature\Signature\SignatureVerifier;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+class WebhookController
+{
+    public function __construct(private SignatureVerifier $verifier) {}
+
+    public function __invoke(Request $request): JsonResponse
+    {
+        if (!$this->verifier->verify($request)) {
+            return response()->json(['error' => 'Invalid signature'], 403);
+        }
+
+        // Process webhook...
+        return response()->json(['status' => 'ok']);
+    }
+}
 ```
 
-## Verify the signature
+## How It Works
 
-Take the received request and perform the same calculation to compare computed HMAC and received sign HEADER.
+1. A **signing string** is built: `METHOD.URL.TIMESTAMP.BODY`
+2. An HMAC-SHA256 hash is computed using the shared secret
+3. Two headers are added to the request:
+   - `PS-Timestamp` — Unix timestamp
+   - `PS-Signature` — 64-char hex HMAC hash
+4. On verification, the signature is recomputed and compared using constant-time `hash_equals()`
+5. Requests older than **60 seconds** are rejected (replay protection)
 
+## API
+
+### Services (recommended)
+
+| Class | Purpose |
+|---|---|
+| `HttpClient\SignedHttpClient` | Symfony `HttpClientInterface` decorator, auto-signs requests |
+| `HttpClient\SignedClientFactory` | Factory creating Guzzle clients with signing middleware |
+| `Signature\SignatureVerifier` | Verifies incoming request signatures (PSR-7 and Symfony) |
+| `Laravel\HttpSignatureServiceProvider` | Laravel service provider for container registration |
+
+### Traits (legacy)
+
+| Trait | Purpose |
+|---|---|
+| `Signature\Signer` | Adds `sign(RequestInterface): RequestInterface` |
+| `Signature\Verifier` | Adds `verify(Request\|RequestInterface): bool` |
+| `HttpClient\HttpClient` | Guzzle middleware, auto-signs every request |
+
+All traits require implementing `getSignatureKey(): string`.
+
+### Core
+
+| Class | Purpose |
+|---|---|
+| `Signature\Signature` | HMAC-SHA256 hash generator and comparator |
+| `Signature\SigningString` | Builds the `METHOD.URL.TIMESTAMP.BODY` string |
+
+## Compatibility
+
+| PHP | Status |
+|-----|--------|
+| 8.2 | ✅ |
+| 8.3 | ✅ |
+| 8.4 | ✅ |
+| 8.5 | ✅ |
+
+| Symfony | Status |
+|---------|--------|
+| 6.4     | ✅ |
+| 7.x     | ✅ |
+| 8.x     | ✅ |
+
+| Laravel | Status |
+|---------|--------|
+| 10.x    | ✅ |
+| 11.x    | ✅ |
+| 12.x    | ✅ |
+| 13.x    | ✅ |
+
+## Local Development
+
+Requires [Docker](https://www.docker.com/).
+
+```bash
+make up        # Start container
+make install   # Install dependencies
+make qa        # Run full QA suite (rector + pint + phpstan + tests)
 ```
-$sourceString = METHOD.url.timestamp.stringified_body
-if (timestamp older than 1m)
-   reject query, it can be Man to the middle who try to replay query
 
-$computedHash = hash_hmac('sha256', $sourceString, backup_secret_token)
-if (hash_equals($computedHash, $receivedSignHeader)
-    we have legit request
-```
+Available targets:
 
-## How to test
+| Command | Description |
+|---------|-------------|
+| `make up` | Start container |
+| `make down` | Stop container |
+| `make install` | Install Composer dependencies |
+| `make update` | Update Composer dependencies |
+| `make test` | Run PHPUnit tests |
+| `make phpstan` | Run static analysis (level max) |
+| `make pint` | Fix code style (PSR-12) |
+| `make rector` | Run automated refactoring |
+| `make qa` | Run all checks |
+| `make shell` | Open container shell |
 
-View documentation folder
+## Disclaimer
+
+This package is maintained by [Ipedis](https://www.ipedis.com). It is provided as-is under the terms of its license.
