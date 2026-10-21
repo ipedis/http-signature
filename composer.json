@@ -5,7 +5,7 @@
     "license": "CC-BY-1.0",
     "require": {
         "guzzlehttp/guzzle": "~7.0",
-        "php": ">=8.2.0",
+        "php": ">=8.3.0",
         "symfony/http-foundation": "^6.4|^7.0|^8.0",
         "symfony/psr-http-message-bridge": "^6.4|^7.0|^8.0",
         "symfony/http-client-contracts": "^3.0",

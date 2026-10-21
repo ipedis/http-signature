@@ -248,7 +248,6 @@ All traits require implementing `getSignatureKey(): string`.
 
 | PHP | Status |
 |-----|--------|
-| 8.2 | ✅ |
 | 8.3 | ✅ |
 | 8.4 | ✅ |
 | 8.5 | ✅ |
